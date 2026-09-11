@@ -3,10 +3,12 @@ Summary(pl.UTF-8):	Aktywacja OWASP Core Rule Set dla modułu ModSecurity nginx-a
 Name:		nginx-mod_http_modsecurity_crs
 # loader layout follows CRS 4 (plugins/*-{config,before,after}.conf), not a CRS release
 Version:	4.0
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Daemons
 Source0:	%{name}.conf
+Source1:	REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+Source2:	RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 URL:		https://coreruleset.org/
 # crs-setup.conf.example is copied at build time
 BuildRequires:	modsecurity-crs >= 4
@@ -42,6 +44,7 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/modsecurity/rules.d
 cp -p %{SOURCE0} $RPM_BUILD_ROOT%{_sysconfdir}/modsecurity/rules.d/10_crs.conf
 # rule 901001 rejects every request unless a setup file is loaded before rules/
 cp -p %{_datadir}/modsecurity-crs/crs-setup.conf.example $RPM_BUILD_ROOT%{_sysconfdir}/modsecurity/crs-setup.conf
+cp -p %{SOURCE1} %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/modsecurity
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -57,4 +60,6 @@ fi
 %files
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/modsecurity/crs-setup.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/modsecurity/rules.d/10_crs.conf
